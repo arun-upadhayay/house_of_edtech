@@ -2,32 +2,29 @@
 
 import { useState } from "react";
 
+type TaskStatus = "todo" | "in_progress" | "done";
+
+type InitialTask = {
+  title: string;
+  description?: string | null;
+  status?: TaskStatus;
+};
+
 type Props = {
-  initial?: {
-    title: string;
-    description?: string | null;
-    status?: "todo" | "in_progress" | "done";
-  };
+  initial?: InitialTask;
   submitText: string;
   onSubmit: (payload: {
     title: string;
     description?: string;
-    status: "todo" | "in_progress" | "done";
+    status: TaskStatus;
   }) => Promise<void>;
-};
-
-type TaskInitial = {
-  title: string;
-  description?: string | null;
-  status?: "todo" | "in_progress" | "done";
 };
 
 export default function TaskForm({ initial, submitText, onSubmit }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [description, setDescription] = useState(initial?.description ?? "");
- const [status, setStatus] = useState<Props["initial"]["status"]>(
-    (initial as TaskInitial)?.status ?? "todo"
-  );
+  const [description, setDescription] = useState<string>(initial?.description ?? "");
+  const [status, setStatus] = useState<TaskStatus>(initial?.status ?? "todo");
+
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -38,10 +35,11 @@ export default function TaskForm({ initial, submitText, onSubmit }: Props) {
 
     try {
       setLoading(true);
+
       await onSubmit({
         title,
-        description: description || undefined,
-        status: status ?? "todo",
+        description: description.trim() ? description : undefined,
+        status,
       });
     } catch (e: any) {
       setErr(e?.message || "Failed");
@@ -51,7 +49,7 @@ export default function TaskForm({ initial, submitText, onSubmit }: Props) {
   };
 
   return (
-    <form onSubmit={handle} className="space-y-4 text-neutral-900">
+    <form onSubmit={handle} className="space-y-4">
       <div>
         <label className="text-sm font-medium">Title</label>
         <input
@@ -78,7 +76,7 @@ export default function TaskForm({ initial, submitText, onSubmit }: Props) {
         <label className="text-sm font-medium">Status</label>
         <select
           value={status}
-          onChange={(e) => setStatus(e.target.value as any)}
+          onChange={(e) => setStatus(e.target.value as TaskStatus)}
           className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-zinc-900/10"
         >
           <option value="todo">To do</option>
