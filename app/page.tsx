@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-zinc-50">
+    <div className="min-h-screen bg-linear-to-b from-white to-zinc-50">
       <div className="mx-auto max-w-6xl px-4 py-16">
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           Secure CRUD App (Next.js 16 + PostgreSQL)

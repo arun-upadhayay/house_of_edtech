@@ -3,14 +3,14 @@ import LoginClient from "./LoginClient";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>;
-}) {
+type SP = Record<string, string | string[] | undefined>;
+
+export default async function LoginPage(props: { searchParams?: Promise<SP> | SP }) {
+  const sp = (await (props.searchParams as any)) as SP | undefined;
+
   const next =
-    typeof searchParams?.next === "string" && searchParams.next.trim()
-      ? searchParams.next
+    typeof sp?.next === "string" && sp.next.trim()
+      ? sp.next
       : "/dashboard";
 
   return (
